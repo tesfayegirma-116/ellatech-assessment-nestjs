@@ -20,7 +20,7 @@ describe('AppController', () => {
       expect(result).toHaveProperty('name');
       expect(result).toHaveProperty('version');
       expect(result).toHaveProperty('endpoints');
-      expect(result.name).toBe('EllaTech Inventory Management API');
+      expect(result.name).toBe('EllaTech Assessment - NestJS Product Management API');
     });
   });
 });
