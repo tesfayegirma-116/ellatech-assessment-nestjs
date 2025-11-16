@@ -15,8 +15,12 @@ describe('AppController', () => {
   });
 
   describe('root', () => {
-    it('should return "Hello World!"', () => {
-      expect(appController.getHello()).toBe('Hello World!');
+    it('should return API information', () => {
+      const result = appController.getApiInfo();
+      expect(result).toHaveProperty('name');
+      expect(result).toHaveProperty('version');
+      expect(result).toHaveProperty('endpoints');
+      expect(result.name).toBe('EllaTech Inventory Management API');
     });
   });
 });

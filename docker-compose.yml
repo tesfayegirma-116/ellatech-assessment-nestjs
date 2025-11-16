@@ -1,39 +1,43 @@
-version: '3.8'
-
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: ellatech-postgres
+    container_name: ${POSTGRES_CONTAINER_NAME}
     restart: unless-stopped
     environment:
-      POSTGRES_DB: ellatech_db
-      POSTGRES_USER: ellatech_user
-      POSTGRES_PASSWORD: ellatech_password
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
-      - '5432:5432'
+      - '${POSTGRES_PORT}:5432'
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - ellatech-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
-  api:
+  app:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: ellatech-api
+    container_name: ${API_CONTAINER_NAME}
     restart: unless-stopped
     environment:
-      NODE_ENV: production
+      NODE_ENV: ${NODE_ENV}
       DB_HOST: postgres
       DB_PORT: 5432
-      DB_USERNAME: ellatech_user
-      DB_PASSWORD: ellatech_password
-      DB_DATABASE: ellatech_db
-      PORT: 3000
+      DB_USERNAME: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      DB_DATABASE: ${POSTGRES_DB}
+      PORT: ${API_PORT}
     ports:
-      - '3000:3000'
+      - '${API_PORT}:${API_PORT}'
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     networks:
       - ellatech-network
 
